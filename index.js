@@ -7,8 +7,10 @@ app.get('/', (req, res) => {
 res.sendFile(__dirname + '/index.html');
 });
 
-http.listen(3000, () => {
-console.log('Server is running on port 3000');
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 io.on('connection', (socket) => {
   socket.on('chat message', (data) => {
