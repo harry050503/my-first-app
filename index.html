@@ -1,0 +1,142 @@
+!DOCTYPE html>
+<html>
+  <head>
+    <title>My First Chat App</title>
+    <style>
+      /* This makes the chat look nice */
+  
+  body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    background-color: #f0f2f5; /* Light grey background like Facebook */
+    margin: 0; 
+    padding-bottom: 3rem; 
+  }
+
+  #messages { 
+    list-style-type: none; 
+    margin: 0; 
+    padding: 20px; 
+  }
+
+  /* This makes the messages look like "Bubbles" */
+  #messages > li { 
+    padding: 10px 15px; 
+    background: white; 
+    margin-bottom: 10px; 
+    border-radius: 15px; 
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    max-width: 50%;
+    word-wrap: break-word;
+  }
+
+  /* Makes the input bar stick to the bottom */
+  #form { 
+    background: rgba(0, 0, 0, 0.15); 
+    padding: 0.25rem; 
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    display: flex; 
+    height: 3rem; 
+    box-sizing: border-box; 
+    backdrop-filter: blur(10px); 
+  }
+
+  #input { 
+    border: none; 
+    padding: 0 1rem; 
+    flex-grow: 1; 
+    border-radius: 2rem; 
+    margin: 0.25rem; 
+  }
+
+  #input:focus { outline: none; }
+
+  #form > button { 
+    background: #0084ff; /* Classic Blue */
+    border: none; 
+    padding: 0 1rem; 
+    margin: 0.25rem; 
+    border-radius: 3px; 
+    outline: none; 
+    color: #fff; 
+    font-weight: bold;
+    cursor: pointer;
+  }   /* Messages from you float to the right and are blue */
+.my-message {
+  align-self: flex-end;
+  background-color: #0084ff !important;
+  color: white;
+  border-bottom-right-radius: 2px !important;
+  margin-left: auto; /* Pushes the bubble to the right */
+}
+
+/* Messages from others float to the left and are white/grey */
+.other-message {
+  align-self: flex-start;
+  background-color: #e4e6eb !important;
+  color: black;
+  border-bottom-left-radius: 2px !important;
+}
+
+/* Update your #messages list to be a "Flexbox" so it can align left/right */
+#messages {
+  display: flex;
+  flex-direction: column;
+  list-style-type: none;
+  padding: 20px;
+}
+</style>
+    </style>
+  </head>                                                                                                                                                                                                  
+  <body>
+    <ul id="messages"></ul>
+
+    <form id="form" action="">
+      <input id="input" autocomplete="off" placeholder="Type a message..." /><button>Send</button>
+    </form>
+<script src="/socket.io/socket.io.js"></script>
+    <script>
+  var socket = io();
+  var userName = prompt("Please enter your name:");
+  if (!userName) { userName = "Guest"; }
+
+  var form = document.getElementById('form');
+  var input = document.getElementById('input');
+  var messages = document.getElementById('messages');
+
+  form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (input.value) {
+    // Create the clean time here!
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    socket.emit('chat message', { 
+      text: input.value, 
+      name: userName, 
+      time: time // Now 'time' only has hours and minutes
+    });
+    input.value = '';
+  }
+});
+   // This closes the form function
+
+  socket.on('chat message', function(data) {
+  var item = document.createElement('li');
+  
+  // LOGIC: Check if the sender's name matches your name
+  if (data.name === userName) {
+    item.classList.add('my-message');
+  } else {
+    item.classList.add('other-message');
+  }
+
+  item.innerHTML = `<b>${data.name}</b> <br>${data.text} <small>${data.time}</small>`;
+  messages.appendChild(item);
+  window.scrollTo(0, document.body.scrollHeight);
+});
+  
+</script>
+  </body>
+</html>  
