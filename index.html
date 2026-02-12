@@ -135,7 +135,11 @@
   item.innerHTML = `<b>${data.name}</b> <br>${data.text} <small>${data.time}</small>`;
   messages.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
-});
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+  console.log('Server is live!');
+});});
   
 </script>
   </body>
